@@ -44,15 +44,69 @@ The requirements from [eIDAS] Art. 24(1a) and [ETSI TS 119 461 v2.1.1](https://w
 
 #### Qualified electronic sealing service
 
-TBD
+The requirements from [eIDAS] Art. 35, Art. 38, Annex III,  [ETSI TS 119 431-1 V1.3.1](https://www.etsi.org/deliver/etsi_ts/119400_119499/11943101/01.03.01_60/ts_11943101v010301p.pdf), [ETSI EN 319 411-2 V2.6.1](https://www.etsi.org/deliver/etsi_en/319400_319499/31941102/02.06.01_60/en_31941102v020601p.pdf), [ETSI EN 319 401 V3.1.1](https://www.etsi.org/deliver/etsi_en/319400_319499/319401/03.01.01_60/en_319401v030101p.pdf) and [ETSI TS 119 431-1 V1.3.1](https://www.etsi.org/deliver/etsi_ts/119400_119499/11943101/01.03.01_60/ts_11943101v010301p.pdf) apply.
 
 #### Qualified time stamping service
 
-TBD
+The requirements from [eIDAS] Art. 42 apply.
 
 ### Deployment model and interfaces
 
 The visualisation below represents a value chain, in which the primary data flows from left to right. The technical control flow may be reverse, for example using service request-response patterns.
+
+```mermaid
+---
+title: Figure 1. Deployment model and interfaces
+config:
+  htmlLabels: false
+  markdownAutoWrap: true
+  flowchart:
+    #defaultRenderer: "elk"
+---
+flowchart LR
+subgraph Responsible body
+    AS[Authentic
+    source]@{shape: cyl}
+end
+subgraph EC[EBW of a provider A]
+    CatAtt[Catalogue of
+    attributes]@{shape: docs}
+    CatSch[Catalogue of
+    EAA schemes]@{shape: docs}
+end
+subgraph QTSP[Qualified trust service provider]
+    APS[Attribute proofing service]@{shape: rounded}
+    IPS[Identity
+    proofing
+    service]@{shape: rounded}
+    EAAS["QEAA service"]@{shape: rounded}
+    Rev[Revocation
+    event]@{shape: diamond}
+end
+subgraph Sub[Subscriber]
+    Wallet
+end
+subgraph Relying party
+    RP["Relying
+    party
+    instance"]
+end
+subgraph "TL scheme operator"
+    TL["Trusted
+    list (TL)"]@{shape: doc}
+end
+CatSch ---|1\. EAA scheme publication| EAAS
+EAAS   ---|2\. QTSP registration     | TL
+EAAS   ---|9\. QEAA issuance         | Wallet
+IPS    ---|3\. Identity verification | Wallet
+CatAtt ---|4\. Source discovery      | APS
+AS     ---|5\. Attribute retrieval   | APS
+AS     ---|6\. Attribute verification| APS
+Rev    ---|11\. QEAA revocation      | EAAS
+APS    ---|8\. Attribute proofing   | EAAS
+IPS    ---|7\. Identity proofing     | EAAS
+EAAS   ---|10\. QEAA validation       | RP
+```
 
 TBD
 
