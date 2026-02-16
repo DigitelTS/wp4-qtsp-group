@@ -64,48 +64,48 @@ config:
     #defaultRenderer: "elk"
 ---
 flowchart LR
-subgraph Responsible body
-    AS[Authentic
-    source]@{shape: cyl}
+subgraph Sender[EBW of a sender legal entity 
+    waiting to send documents]
+
+    msg[Document to be 
+    delivered]@{shape: docs}
+    evidenceSender[Evidence of 
+   document sent
+    ]@{shape: docs}
 end
-subgraph EC[EBW of a provider A]
-    CatAtt[Catalogue of
-    attributes]@{shape: docs}
-    CatSch[Catalogue of
-    EAA schemes]@{shape: docs}
+subgraph Receiver[EBW of a receiver legal entity 
+    waiting to receive documents]
+
+    evidenceReceiver[Evidence of 
+    received document 
+    ]@{shape: docs}
+    documentReceiver[Consigned document 
+    ]@{shape: docs}
 end
-subgraph QTSP[Qualified trust service provider]
-    APS[Attribute proofing service]@{shape: rounded}
-    IPS[Identity
-    proofing
-    service]@{shape: rounded}
-    EAAS["QEAA service"]@{shape: rounded}
-    Rev[Revocation
-    event]@{shape: diamond}
+subgraph SenderQTSP[Qualified Trust 
+Service Provider of the sender]
+    APS[QeRDS service]@{shape: rounded}
 end
-subgraph Sub[Subscriber]
-    Wallet
+subgraph ReceiverQTSP[Qualified Trust 
+Service Provider of the sender]
+    APS[QeRDS service]@{shape: rounded}
 end
-subgraph Relying party
-    RP["Relying
-    party
-    instance"]
+subgraph EUD[European Digital Directory]
+discoveryInfo[ Receiver EBW capabilities, endpoints, 
+    etc.]@{shape: cyl}
 end
-subgraph "TL scheme operator"
-    TL["Trusted
-    list (TL)"]@{shape: doc}
-end
-CatSch ---|1\. EAA scheme publication| EAAS
-EAAS   ---|2\. QTSP registration     | TL
-EAAS   ---|9\. QEAA issuance         | Wallet
-IPS    ---|3\. Identity verification | Wallet
-CatAtt ---|4\. Source discovery      | APS
-AS     ---|5\. Attribute retrieval   | APS
-AS     ---|6\. Attribute verification| APS
-Rev    ---|11\. QEAA revocation      | EAAS
-APS    ---|8\. Attribute proofing   | EAAS
-IPS    ---|7\. Identity proofing     | EAAS
-EAAS   ---|10\. QEAA validation       | RP
+
+Sender ---|1\. Perform identification and authentication of sender| SenderQTSP
+Sender ---|2\. Sends document to be delivered to the QeRDS service used by the sender EBW| SenderQTSP
+SenderQTSP ---|3\. Performs discovery about the receiver EBW| EUD
+SenderQTSP ---|4\. Request information about receiver EBW QeRDS| Receiver
+SenderQTSP ---|5\. Performs handshake with receiver EBW QeRDS| ReceiverQTSP
+SenderQTSP ---|6\. Relays the document to the receiver EBW QeRDS| ReceiverQTSP
+ReceiverQTSP ---|7\. Notify for acceptance of the document reception| Receiver
+ReceiverQTSP ---|8\. Perform identification and authentication of receiver| Receiver
+ReceiverQTSP ---|9\. Consignment and handover of the document| Receiver
+ReceiverQTSP ---|10\. Notify successfully consignment and handover of the document to the sender EBW| SenderQTSP
+
 ```
 
 TBD
