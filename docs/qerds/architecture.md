@@ -64,51 +64,44 @@ config:
     #defaultRenderer: "elk"
 ---
 flowchart LR
-subgraph Sender[EBW of a sender legal entity 
-    waiting to send documents]
-
+subgraph Sender[Sender's EBW]
     msg[Document to be 
     delivered]@{shape: docs}
     evidenceSender[Evidence of 
    document sent
     ]@{shape: docs}
 end
-subgraph Receiver[EBW of a receiver legal entity 
-    waiting to receive documents]
-
+subgraph Receiver[Receiver's EBW]
     evidenceReceiver[Evidence of 
-    received document 
+    received 
+    document 
     ]@{shape: docs}
     documentReceiver[Consigned document 
     ]@{shape: docs}
 end
-subgraph SenderQTSP[Qualified Trust 
-Service Provider of the sender]
-    APS[QeRDS service]@{shape: rounded}
+subgraph SenderQTSP[Sender's Qualified Trust 
+Service Provider]
+    QeRDSServiceSender[QeRDS service]@{shape: rounded}
 end
-subgraph ReceiverQTSP[Qualified Trust 
-Service Provider of the sender]
-    APS[QeRDS service]@{shape: rounded}
+subgraph ReceiverQTSP[Receiver's Qualified 
+Trust Service Provider]
+    QeRDSServiceReceiver[QeRDS service]@{shape: rounded}
 end
 subgraph EUD[European Digital Directory]
 discoveryInfo[ Receiver EBW capabilities, endpoints, 
     etc.]@{shape: cyl}
 end
 
-Sender ---|1\. Perform identification and authentication of sender| SenderQTSP
-Sender ---|2\. Sends document to be delivered to the QeRDS service used by the sender EBW| SenderQTSP
-SenderQTSP ---|3\. Performs discovery about the receiver EBW| EUD
-SenderQTSP ---|4\. Request information about receiver EBW QeRDS| Receiver
-SenderQTSP ---|5\. Performs handshake with receiver EBW QeRDS| ReceiverQTSP
-SenderQTSP ---|6\. Relays the document to the receiver EBW QeRDS| ReceiverQTSP
-ReceiverQTSP ---|7\. Notify for acceptance of the document reception| Receiver
-ReceiverQTSP ---|8\. Perform identification and authentication of receiver| Receiver
-ReceiverQTSP ---|9\. Consignment and handover of the document| Receiver
-ReceiverQTSP ---|10\. Notify successfully consignment and handover of the document to the sender EBW| SenderQTSP
-
+Sender ---|1\. Perform identification and authentication of sender| QeRDSServiceSender
+msg ---|2\. Sends document to the QeRDS service used by the sender EBW| QeRDSServiceSender
+SenderQTSP ---|3\. Performs discovery about the receiver EBW QeRDS Service| EUD
+QeRDSServiceSender ---|4\. Performs handshake with receiver's EBW QeRDS| **QeRDSServiceReceiver**
+QeRDSServiceSender ---|5\. Relays the document to the receiver's EBW QeRDS| QeRDSServiceReceiver
+QeRDSServiceReceiver ---|6\. Notify for acceptance of the document reception| Receiver
+Receiver ---|7\. Perform identification and authentication of receiver| QeRDSServiceReceiver
+QeRDSServiceReceiver ---|8\. Consignment and handover of the document| evidenceReceiver
+QeRDSServiceReceiver ---|9. Notify successful consignment and handover of the document| QeRDSServiceSender
 ```
-
-TBD
 
 ### Data flows and interactions
 
@@ -124,4 +117,9 @@ TBD
 
 In the WE BUILD pre-production environment, some European Business Wallet roles are simulated:
 
-TBD
+*Table 2. Role deviations within WE BUILD*
+
+|Role|WE BUILD group|
+|--|--|
+|Commission||
+|European Digital Directory operator| |
