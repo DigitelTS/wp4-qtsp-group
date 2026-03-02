@@ -1,0 +1,22 @@
+@startuml
+autonumber
+participant "Legal Entity User" as user 
+participant "Legal Entity Machine" as m2mUser
+participant "Authorization Server" as authServer
+
+group Client Credentials OAuth2 flow
+    user -> m2mUser: Legal entity employee is authorized through company IAM to perform seal signatures
+    activate user
+    activate m2mUser
+    m2mUser -> authServer: POST /oauth2/token with service scope
+    activate authServer
+    return { access_token }
+    deactivate authServer
+    return { access_token }
+    deactivate m2mUser
+    deactivate user 
+
+
+end group 
+
+@enduml

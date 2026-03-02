@@ -1,0 +1,17 @@
+@startuml signDoc 
+autonumber
+
+actor "Legal Entity User" as user
+participant "Legal Entity Machine" as m2mUser <<Driving Application>>
+participant "Remote Signing\nService Provider" as RSSP <<Signature Creation Application>>
+
+m2mUser -> RSSP :  POST /signatures/signDoc using the SAD
+activate user
+activate m2mUser
+activate RSSP
+return { signed document }
+m2mUser --> user: { signed document }
+
+
+
+@enduml

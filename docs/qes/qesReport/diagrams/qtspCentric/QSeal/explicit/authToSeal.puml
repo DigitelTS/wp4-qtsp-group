@@ -1,0 +1,22 @@
+@startuml authToSeal 
+autonumber
+
+actor "Legal Entity User" as user
+participant "Legal Entity Machine" as m2mUser <<Driving Application>>
+participant "Remote Signing\nService Provider" as RSSP <<Signature Creation Application>>
+
+user -> m2mUser: Initiates the flow to use the company seal \n certificate to sign a document
+activate user
+activate m2mUser
+m2mUser -> RSSP : Requests list of sign credentials available using credential/list 
+activate RSSP
+return { list of sign credentials }
+m2mUser -> user: Presents list of sign credentials to the user
+user -> m2mUser: Selects credential to use along with a document to be signed
+m2mUser -> RSSP: POST /credentials/authorize with request body \n conformant to CSC specification 
+activate RSSP
+return { SAD }
+
+
+
+@enduml
