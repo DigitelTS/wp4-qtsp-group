@@ -219,6 +219,75 @@ R-ERDS ---|11\. Evidence transmission| R-Wallet
 > For considerations regarding interface 16. Message relay, see the technical report on the [QERDS interoperability framework](interop-framework.md).
 
 ### Example use case scenarios
+The following sequence diagram reflects an example use case of a user as the sender and a receiver EBW. It basically refines previous figures into a time-ordered interaction view and aligns it with the interfaces and considerations.
+
+```mermaid
+sequenceDiagram
+    actor User as User
+    participant Sender as Sender's EBW
+    box Sender's Qualified trust service provider
+        participant S_QTSP as Sender's QERDS service
+        participant S_IPS as Sender's Identity proofing service
+        participant S_QES as Sender's QESeal service 
+        participant S_QTS as Sender's QTS service 
+        participant S_ECS as Sender's Evidence service 
+    end
+    participant DD as European Digital Directory
+    box Receiver's Qualified trust service provider
+        participant R_QTSP as Receiver's QERDS service
+        participant R_IPS as Receiver's Identity proofing service
+        participant R_QES as Receiver's QESeal service
+        participant R_QTS as Receiver's QTS service
+        participant R_ECS as Receiver's Evidence service
+    end
+    participant Receiver as Receiver's EBW
+
+    User->>+Sender: Request to send document
+    Sender->>+S_QTSP: 1a. Request to send (identification context)
+    S_QTSP->>+S_IPS: 1b. Identity verification of sender (4)
+    S_IPS->>Sender: Request identity verification of sender
+    Sender->>User: Request identity verification 
+    Sender->>S_IPS: Identity verification data 
+    S_IPS->>S_ECS: Identity proofing result (5)
+    S_IPS-->>-S_QTSP: Verified
+    Sender->>S_QTSP: 2. Document / notification (13, 14. Notification creation, Data submission)
+    deactivate Sender
+    S_QTSP->>+S_ECS: Create evidence (delivery event 6)
+    S_ECS->>+S_QES: Seal creation (7)
+    S_QES-->>-S_ECS: Seal
+    S_ECS->>+S_QTS: Time stamp creation (8)
+    S_QTS-->>-S_ECS: Time stamp
+    S_ECS-->>-S_QTSP: Evidence (9)
+    S_QTSP->>+Sender: Evidence of document sent (11. Evidence transmission)
+
+    S_QTSP->>+DD: 3. Service / identifier discovery (2, 3. Identifier and service discovery)
+    DD-->>-S_QTSP: Receiver EBW capabilities, endpoints
+    S_QTSP->>+R_QTSP: 4. Handshake / capability check (15. Capability discovery)
+    S_QTSP->>R_QTSP: 5. Message relay (16. Message relay)
+
+    R_QTSP->>+Receiver: 6. Notify for acceptance of document reception (10. Data transmission)
+    Receiver->>+R_QTSP: 7a. Request consignment (identification context)
+    R_QTSP->>+R_IPS: 7b. Identity verification of receiver (4)
+    R_IPS->>Receiver: Request identity verification
+    Receiver->>R_IPS: Identity verification data
+    R_IPS->>R_ECS: Identity proofing result (5)
+    R_IPS-->>-R_QTSP: Verified
+    R_QTSP->>+R_ECS: Create evidence (delivery event 6)
+    R_ECS->>+R_QES: Seal creation (7)
+    R_QES-->>-R_ECS: Seal
+    R_ECS->>+R_QTS: Time stamp creation (8)
+    R_QTS-->>-R_ECS: Time stamp
+    R_ECS-->>-R_QTSP: Evidence (9)
+    R_QTSP->>Receiver: 8. Consignment and handover of document (10. Data transmission)
+    R_QTSP->>Receiver: Evidence of received document (11. Evidence transmission)
+    R_QTSP-->>-Receiver: Done
+
+    R_QTSP->>S_QTSP: 9. Notify successful consignment and handover
+    deactivate R_QTSP
+    S_QTSP->>+Sender: Evidence of successful consignment 
+    deactivate Sender
+    deactivate S_QTSP
+```
 
 ## Deviations from European Business Wallets
 
